@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>Quiz dos Substantivos</title>
+    <style>
+        /* Estilos específicos para a página de quiz */
+        body {
+            background-color: #F29B38;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            padding-top: 100px; /* Para compensar a navbar fixa */
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        }
+
+        h1 {
+            color: #CA0700;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .quiz-step {
+            display: none;
+        }
+
+        .quiz-step.active {
+            display: block;
+        }
+
+        .welcome-screen, .results-screen {
+            text-align: center;
+        }
+
+        .question {
+            font-size: 1.3rem;
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: #f5f5f5;
+            border-radius: 8px;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .option {
+            padding: 12px 15px;
+            background-color: #F29B38;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            text-align: left;
+            transition: background-color 0.3s;
+        }
+
+        .option:hover {
+            background-color: #e08c30;
+        }
+
+        .option.selected {
+            background-color: #CA0700;
+        }
+
+        .feedback {
+            font-size: 1.1rem;
+            font-weight: bold;
+            margin: 15px 0;
+            min-height: 30px;
+        }
+
+        .correct {
+            color: green;
+        }
+
+        .incorrect {
+            color: #CA0700;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            background-color: #CA0700;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            margin: 5px;
+            transition: background-color 0.3s;
+        }
+
+        .btn:hover {
+            background-color: #b00600;
+        }
+
+        .btn:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+
+        .progress {
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+
+        input[type="text"] {
+            padding: 10px;
+            font-size: 1rem;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            width: 250px;
+            margin-bottom: 20px;
+        }
+
+        .user-name {
+            font-weight: bold;
+            color: #CA0700;
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <ul>
+            <li><a href="inicial.html">Home</a></li>
+            <li><a href="jogo.html">Jogo</a></li>
+            <li><a href="quiz.html">Quiz</a></li>
+            <li><a href="services.html">Sobre</a></li>
+        </ul>
+    </nav>
+
+    <div class="container">
+        <h1>Quiz dos Substantivos</h1>
+        
+        <!-- Tela de boas-vindas -->
+        <div class="quiz-step active" id="welcomeStep">
+            <div class="welcome-screen">
+                <p>Bem-vindo ao Quiz dos Substantivos!</p>
+                <p>Teste seus conhecimentos sobre substantivos com este quiz interativo.</p>
+                <p>Por favor, digite seu nome para começar:</p>
+                <input type="text" id="userName" placeholder="Seu nome">
+                <br>
+                <button class="btn" id="startQuizBtn">Iniciar Quiz</button>
+            </div>
+        </div>
+        
+        <!-- Tela de perguntas -->
+        <div class="quiz-step" id="questionStep">
+            <div class="progress" id="progress">Pergunta 1 de 11</div>
+            <div class="question" id="question">Carregando pergunta...</div>
+            <div class="options" id="options">
+                <!-- As opções serão preenchidas pelo JavaScript -->
+            </div>
+            <div class="feedback" id="feedback"></div>
+            <div style="text-align: center;">
+                <button class="btn" id="nextBtn" disabled>Próxima Pergunta</button>
+            </div>
+        </div>
+        
+        <!-- Tela de resultados -->
+        <div class="quiz-step" id="resultsStep">
+            <div class="results-screen">
+                <h2>Quiz Concluído!</h2>
+                <p>Parabéns, <span class="user-name" id="resultUserName">Usuário</span>!</p>
+                <p>Sua pontuação final: <span id="finalScore">0</span> de 11</p>
+                <p id="performanceMessage"></p>
+                <div style="margin-top: 30px;">
+                    <button class="btn" id="restartQuizBtn">Refazer Quiz</button>
+                    <button class="btn" id="homeBtn">Voltar para a Página Inicial</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Dados do quiz baseados no documento
+        const quizQuestions = [
+            {
+                question: "O que é um substantivo?",
+                options: [
+                    "Palavra que indica ação ou estado.",
+                    "Palavra que nomeia seres, coisas, lugares, sentimentos ou ideias.",
+                    "Palavra que modifica o substantivo.",
+                    "Palavra que liga termos na oração."
+                ],
+                correctAnswer: 1
+            },
+            {
+                question: "Qual a diferença entre substantivo comum e próprio?",
+                options: [
+                    "O comum é sempre concreto; o próprio é sempre abstrato.",
+                    "O comum é usado no plural; o próprio no singular.",
+                    "O comum nomeia seres em geral; o próprio, seres específicos.",
+                    "Não há diferença, são sinônimos."
+                ],
+                correctAnswer: 2
+            },
+            {
+                question: "O que é um substantivo abstrato?",
+                options: [
+                    "É aquele que nomeia objetos concretos.",
+                    "É aquele que representa um grupo de seres.",
+                    "É aquele formado por mais de um radical.",
+                    "É aquele que nomeia sentimentos, ações ou qualidades."
+                ],
+                correctAnswer: 3
+            },
+            {
+                question: "O que é um substantivo coletivo?",
+                options: [
+                    "Palavra que nomeia sentimentos abstratos.",
+                    "Palavra que vem de outra palavra.",
+                    "Palavra que possui apenas um radical.",
+                    "Palavra que representa um grupo de seres da mesma espécie."
+                ],
+                correctAnswer: 3
+            },
+            {
+                question: "Dê um exemplo de substantivo composto.",
+                options: [
+                    "Casa, carro, livro.",
+                    "Amor, tristeza, alegria.",
+                    "Cardume, matilha, enxame.",
+                    "Guarda-chuva, beija-flor, segunda-feira."
+                ],
+                correctAnswer: 3
+            },
+            {
+                question: "Quais são os gêneros dos substantivos?",
+                options: [
+                    "Singular e Plural.",
+                    "Simples e Composto.",
+                    "Comum e Próprio.",
+                    "Masculino e Feminino."
+                ],
+                correctAnswer: 3
+            },
+            {
+                question: "O que é aumentativo?",
+                options: [
+                    "Mostra tamanho pequeno ou carinho.",
+                    "Indica que o substantivo é feminino.",
+                    "Indica que o substantivo é plural.",
+                    "Mostra tamanho grande ou exagero."
+                ],
+                correctAnswer: 3
+            },
+            {
+                question: "O que é diminutivo?",
+                options: [
+                    "Mostra tamanho grande ou exagero.",
+                    "Indica que o substantivo é masculino.",
+                    "Indica que o substantivo é singular.",
+                    "Mostra tamanho pequeno ou carinho."
+                ],
+                correctAnswer: 3
+            },
+            {
+                question: "O que são substantivos epicenos?",
+                options: [
+                    "Têm forma diferente para masculino e feminino.",
+                    "São sempre no plural.",
+                    "São sempre abstratos.",
+                    "Usam um único gênero para designar machos e fêmeas (geralmente animais)."
+                ],
+                correctAnswer: 3
+            },
+            {
+                question: "Qual é a diferença entre substantivo comum e próprio?",
+                options: [
+                    "O comum é sempre abstrato; o próprio é sempre concreto.",
+                    "O comum vem de outra palavra; o próprio é primitivo.",
+                    "O comum é sempre plural; o próprio é sempre singular.",
+                    "O comum nomeia qualquer ser da espécie; o próprio identifica um ser único."
+                ],
+                correctAnswer: 3
+            },
+            {
+                question: "O que é um substantivo simples?",
+                options: [
+                    "Possui mais de um radical.",
+                    "Não deriva de outra palavra.",
+                    "Representa um grupo de seres.",
+                    "Possui apenas um radical."
+                ],
+                correctAnswer: 3
+            }
+        ];
+
+        // Elementos DOM
+        const welcomeStep = document.getElementById('welcomeStep');
+        const questionStep = document.getElementById('questionStep');
+        const resultsStep = document.getElementById('resultsStep');
+        const userNameInput = document.getElementById('userName');
+        const startQuizBtn = document.getElementById('startQuizBtn');
+        const questionElement = document.getElementById('question');
+        const optionsElement = document.getElementById('options');
+        const feedbackElement = document.getElementById('feedback');
+        const nextBtn = document.getElementById('nextBtn');
+        const progressElement = document.getElementById('progress');
+        const resultUserName = document.getElementById('resultUserName');
+        const finalScoreElement = document.getElementById('finalScore');
+        const performanceMessage = document.getElementById('performanceMessage');
+        const restartQuizBtn = document.getElementById('restartQuizBtn');
+        const homeBtn = document.getElementById('homeBtn');
+
+        // Variáveis de estado
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let userAnswers = [];
+        let userName = '';
+
+        // Inicializar o quiz
+        function initQuiz() {
+            // Event listeners
+            startQuizBtn.addEventListener('click', startQuiz);
+            nextBtn.addEventListener('click', nextQuestion);
+            restartQuizBtn.addEventListener('click', restartQuiz);
+            homeBtn.addEventListener('click', goHome);
+            
+            // Permitir iniciar com Enter no campo de nome
+            userNameInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    startQuiz();
+                }
+            });
+        }
+
+        // Iniciar o quiz
+        function startQuiz() {
+            userName = userNameInput.value.trim();
+            
+            if (userName === '') {
+                alert('Por favor, digite seu nome para começar o quiz.');
+                return;
+            }
+            
+            // Ir para a primeira pergunta
+            welcomeStep.classList.remove('active');
+            questionStep.classList.add('active');
+            
+            loadQuestion();
+        }
+
+        // Carregar pergunta atual
+        function loadQuestion() {
+            const currentQuestion = quizQuestions[currentQuestionIndex];
+            questionElement.textContent = currentQuestion.question;
+            
+            // Atualizar progresso
+            progressElement.textContent = `Pergunta ${currentQuestionIndex + 1} de ${quizQuestions.length}`;
+            
+            // Limpar opções anteriores
+            optionsElement.innerHTML = '';
+            feedbackElement.textContent = '';
+            feedbackElement.className = 'feedback';
+            nextBtn.disabled = true;
+            
+            // Adicionar opções ao DOM
+            currentQuestion.options.forEach((option, index) => {
+                const button = document.createElement('button');
+                button.textContent = option;
+                button.className = 'option';
+                button.addEventListener('click', () => selectAnswer(index));
+                optionsElement.appendChild(button);
+            });
+        }
+
+        // Selecionar resposta
+        function selectAnswer(selectedIndex) {
+            const currentQuestion = quizQuestions[currentQuestionIndex];
+            const isCorrect = selectedIndex === currentQuestion.correctAnswer;
+            
+            // Salvar resposta do usuário
+            userAnswers[currentQuestionIndex] = {
+                question: currentQuestion.question,
+                selectedAnswer: currentQuestion.options[selectedIndex],
+                correctAnswer: currentQuestion.options[currentQuestion.correctAnswer],
+                isCorrect: isCorrect
+            };
+            
+            // Atualizar pontuação
+            if (isCorrect) {
+                score++;
+                feedbackElement.textContent = 'Resposta correta!';
+                feedbackElement.className = 'feedback correct';
+            } else {
+                feedbackElement.textContent = `Resposta incorreta. A resposta correta é: "${currentQuestion.options[currentQuestion.correctAnswer]}"`;
+                feedbackElement.className = 'feedback incorrect';
+            }
+            
+            // Destacar a resposta selecionada e a correta
+            const allButtons = optionsElement.querySelectorAll('.option');
+            allButtons.forEach((button, index) => {
+                button.disabled = true;
+                
+                if (index === selectedIndex) {
+                    button.classList.add('selected');
+                }
+                
+                if (index === currentQuestion.correctAnswer) {
+                    button.style.backgroundColor = 'green';
+                } else if (index === selectedIndex && !isCorrect) {
+                    button.style.backgroundColor = '#CA0700';
+                }
+            });
+            
+            // Habilitar botão "Próxima"
+            nextBtn.disabled = false;
+        }
+
+        // Próxima pergunta
+        function nextQuestion() {
+            currentQuestionIndex++;
+            
+            if (currentQuestionIndex < quizQuestions.length) {
+                loadQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        // Mostrar resultados
+        function showResults() {
+            questionStep.classList.remove('active');
+            resultsStep.classList.add('active');
+            
+            // Exibir nome do usuário e pontuação
+            resultUserName.textContent = userName;
+            finalScoreElement.textContent = `${score} de ${quizQuestions.length}`;
+            
+            // Mensagem de desempenho
+            const percentage = (score / quizQuestions.length) * 100;
+            if (percentage >= 90) {
+                performanceMessage.textContent = 'Excelente! Você domina o assunto sobre substantivos!';
+            } else if (percentage >= 70) {
+                performanceMessage.textContent = 'Muito bom! Você tem um bom conhecimento sobre substantivos.';
+            } else if (percentage >= 50) {
+                performanceMessage.textContent = 'Bom! Com um pouco mais de estudo você vai se tornar um expert!';
+            } else {
+                performanceMessage.textContent = 'Continue estudando! A prática leva à perfeição.';
+            }
+        }
+
+        // Reiniciar o quiz
+        function restartQuiz() {
+            currentQuestionIndex = 0;
+            score = 0;
+            userAnswers = [];
+            
+            resultsStep.classList.remove('active');
+            questionStep.classList.add('active');
+            
+            loadQuestion();
+        }
+
+        // Voltar para a página inicial
+        function goHome() {
+            window.location.href = 'inicial.html';
+        }
+
+        // Inicializar o quiz quando a página carregar
+        document.addEventListener('DOMContentLoaded', initQuiz);
+    </script>
+</body>
+</html>
