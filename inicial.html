@@ -1,20 +1,549 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style.css">
     <title>Início</title>
+    <style>
+        /* Estilos específicos para a página de jogos */
+        body {
+            background-color: #F29B38;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            padding-top: 100px;
+            /* Para compensar a navbar fixa */
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        }
+
+        h1 {
+            color: #CA0700;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .game-area {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .sentence {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: #f5f5f5;
+            border-radius: 8px;
+        }
+
+        .options {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .option {
+            padding: 10px 15px;
+            background-color: #F29B38;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background-color 0.3s;
+        }
+
+        .option:hover {
+            background-color: #e08c30;
+        }
+
+        .feedback {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin: 15px 0;
+            min-height: 30px;
+        }
+
+        .correct {
+            color: green;
+        }
+
+        .incorrect {
+            color: #CA0700;
+        }
+
+        .score {
+            font-size: 1.1rem;
+            margin-bottom: 20px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            background-color: #CA0700;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            margin: 5px;
+            transition: background-color 0.3s;
+        }
+
+        .btn:hover {
+            background-color: #b00600;
+        }
+
+        .game-selection {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .button-wrapper {
+            display: flex;
+            flex-wrap: wrap;           /* permite quebrar linha */
+            gap: 10px;                 /* espaço entre os botões */
+            justify-content: center;   /* mantém centralizado */
+            margin-bottom: 25px;
+        }
+
+        /* Estilo dos botões */
+        .game-type {
+            padding: 12px 22px;
+            background-color: #F29B38;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.05rem;
+            white-space: nowrap;       /* evita quebra dentro do botão */
+            transition: 0.3s;
+        }
+
+        .game-type:hover {
+            background-color: #CA6A15;
+        }
+
+        .results-screen {
+            text-align: center;
+            display: none;
+        }
+
+        .results-screen.active {
+            display: block;
+        }
+
+        .results-summary {
+            background-color: #f5f5f5;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .results-details {
+            text-align: left;
+            max-height: 300px;
+            overflow-y: auto;
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: #f9f9f9;
+            border-radius: 8px;
+        }
+
+        .result-item {
+            margin-bottom: 10px;
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .result-correct {
+            color: green;
+        }
+
+        .result-incorrect {
+            color: #CA0700;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background-color: #f0f0f0;
+            border-radius: 10px;
+            margin: 10px 0;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background-color: #4CAF50;
+            transition: width 0.3s ease;
+        }
+
+        .substantivo-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background-color: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .substantivo-table th {
+            background-color: #CA0700;
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-size: 1.1rem;
+        }
+
+        .substantivo-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .substantivo-table tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        .substantivo-table tr:hover {
+            background-color: #fff5e6;
+        }
+
+        .substantivo-table td:first-child {
+            font-weight: bold;
+            color: #CA0700;
+            width: 150px;
+        }
+
+        .substantivo-table td:nth-child(2) {
+            font-style: italic;
+
+        }
+    </style>
 </head>
+
 <body>
     <nav>
         <ul>
             <li><a href="inicial.html">Home</a></li>
             <li><a href="jogo.html">Jogo</a></li>
             <li><a href="quiz.html">Quiz</a></li>
-            <li><a href="services.html">Sobre</a></li>
+            <li><a href="sobre.html">Sobre</a></li>
         </ul>
     </nav>
-    
+
+    <div class="container">
+        <h1>O que é Substantivo</h1>
+
+        <div class="score" id="progressIdentify">
+            <p>O <b>substantivo</b> é uma das classes gramaticais mais importantes da língua portuguesa.</p>
+        </div>
+
+        <div class="score" id="progressIdentify">
+            <p>Ele é a <b>palavra que dá nome aos seres, objetos, lugares, sentimentos, ideias, fenômenos e ações.</b>
+            </p>
+        </div>
+
+        <div class="score" id="progressIdentify">
+            <p>Tudo o que existe — seja real, imaginário ou abstrato — recebe um nome, e esse nome é um substantivo.</p>
+        </div>
+
+
+        <h2><span style="font-size: 120%;">Exemplos</span></h2>
+        <div class="score" style="display: block; padding-left: 5%;">
+            <p><b>Seres:</b> homem, mulher, cachorro, criança</p>
+
+            <p><b>Objetos:</b> mesa, caderno, celular, carro</p>
+
+            <p><b>Lugares:</b> escola, Brasil, praia, cidade</p>
+
+            <p><b>Sentimentos:</b> amor, raiva, alegria, tristeza</p>
+
+            <p><b>Fenômenos:</b> chuva, vento, sol, trovão</p>
+        </div>
+
+        <div class="score" id="progressIdentify">
+            <p>Tudo o que pode ser <b>nomeado</b> é um <b>substantivo</b>.</p>
+        </div>
+
+        <div id="Classificacao_subs">
+        <h1>Classificação dos Substantivos</h1>
+
+        <table class="substantivo-table">
+            <tr>
+                <th>Tipo</th>
+                <th>Explicação</th>
+                <th>Exemplos</th>
+            </tr>
+            <tr>
+                <td>Comum</td>
+                <td>Nomeia seres de uma mesma espécie.</td>
+                <td>menino, cidade, cachorro</td>
+            </tr>
+            <tr>
+                <td>Próprio</td>
+                <td>Nomeia seres específicos (com inicial maiúscula).</td>
+                <td>João, Brasil, Florianópolis</td>
+            </tr>
+            <tr>
+                <td>Concreto</td>
+                <td>Seres que existem por si mesmos.</td>
+                <td>casa, árvore, pessoa</td>
+            </tr>
+            <tr>
+                <td>Abstrato</td>
+                <td>Nomeia ações, estados ou qualidades.</td>
+                <td>amor, beleza, tristeza</td>
+            </tr>
+            <tr>
+                <td>Simples</td>
+                <td>Possui apenas um radical.</td>
+                <td>flor, pedra</td>
+            </tr>
+            <tr>
+                <td>Composto</td>
+                <td>Formado por mais de um radical.</td>
+                <td>beija-flor, guarda-chuva</td>
+            </tr>
+            <tr>
+                <td>Primitivo</td>
+                <td>Não deriva de outra palavra.</td>
+                <td>pedra, flor</td>
+            </tr>
+            <tr>
+                <td>Derivado</td>
+                <td>Vem de outra palavra.</td>
+                <td>pedreiro, florista</td>
+            </tr>
+            <tr>
+                <td>Coletivo</td>
+                <td>Nomeia um conjunto de seres da mesma espécie.</td>
+                <td>cardume (peixes), matilha (cães), enxame (abelhas)</td>
+            </tr>
+        </table>
+        </div>
+
+        <div id="Genero_subs">
+        <h1>Gênero dos Substantivos</h1>
+        <table class="substantivo-table">
+            <tr>
+                <th>Tipo</th>
+                <th>Explicação</th>
+                <th>Exemplos</th>
+            </tr>
+            <tr>
+                <td>Masculino</td>
+                <td>Usado com o artigo “o”.</td>
+                <td>o menino, o carro, o professor</td>
+            </tr>
+            <tr>
+                <td>Feminino</td>
+                <td>Usado com o artigo “a”</td>
+                <td>a menina, a casa, a professora</td>
+            </tr>
+        </table>
+
+        <h2><span style="font-size: 120%;">Observação:</span></h2>
+
+        <div class="score" id="progressIdentify">
+            <p>Alguns substantivos têm <b>forma diferente</b> para o masculino e o feminino:</p>
+        </div>
+
+        <div class="score" style="display: block; padding-left: 5%;">
+
+            <p><b>• Homem / Mulher</b></p>
+
+            <p><b>• Galo / Galinha</b></p>
+        </div>
+
+        <div class="score" id="progressIdentify">
+            <p>Outros mantêm a mesma forma, mudando apenas o artigo:</p>
+        </div>
+
+        <div class="score" style="display: block; padding-left: 5%;">
+
+            <p><b>• o estudante / a estudante</b></p>
+
+            <p><b>• o artista / a artista</b></p>
+        </div>
+        </div>
+        
+        <div id="Numero_subs">
+            <h1>Número dos Substantivos</h1>
+
+            <div class="score" id="progressIdentify">
+                <p>O número indica quantidade:</p>
+            </div>
+
+            <div class="score" style="display: block; padding-left: 5%;">
+                <p><b>• Singular:</b> indica um ser → <b>flor, livro, menino</b></p>
+
+                <p><b>• Plural:</b> indica mais de um ser → <b>flores, livros, meninos</b></p>
+            </div>
+
+            <h2><span style="font-size: 120%;">Regras de formação do plural:</span></h2>
+            <div class="score" style="display: block; padding-left: 5%;">
+                <p>Palavras terminadas em -a, -e, -o → acrescenta-se -s</p>
+
+                <div style="padding-left: 3%;">
+                    <p>• casa → casas</p>
+                </div>
+
+                <p>Terminadas em -m → troca por -ns</p>
+
+                <div style="padding-left: 3%;">
+                    <p>• homem → homens</p>
+                </div>
+                
+                <p>Terminadas em -r, -z → acrescenta-se -es</p>
+
+                <div style="padding-left: 3%;">
+                    <p>• flor → flores</p>
+                </div>
+                
+                <p>Terminadas em -ão → podem virar -ões, -ães ou -ãos</p>
+
+                <div style="padding-left: 3%;">
+                    <p>• leão → leões / pão → pães / irmão → irmãos</p>
+                </div>
+            </div>
+        </div>
+
+        <div id="grau_subs">
+        <h1>Grau dos Substantivos</h1>
+        <table class="substantivo-table">
+            <tr>
+                <th>Grau</th>
+                <th>Explicação</th>
+                <th>Exemplos</th>
+            </tr>
+            <tr>
+                <td>Aumentativo</td>
+                <td>Indica grandeza ou intensidade.</td>
+                <td>casarão, mulheraça, homenzarrão</td>
+            </tr>
+            <tr>
+                <td>Diminutivo</td>
+                <td>Indica pequenez, carinho ou desprezo.</td>
+                <td>casinha, florzinha, livrinho</td>
+            </tr>
+        </table>
+        </div>
+
+        <div id="Funcao_subs">
+            <h1>Função dos Substantivos na Oração</h1>
+            <table class="substantivo-table">
+                <tr>
+                    <th>Função</th>
+                    <th>Explicação</th>
+                    <th>Exemplos</th>
+                </tr>
+                <tr>
+                    <td>Sujeito</td>
+                    <td>Quem pratica a ação.</td>
+                    <td>Maria estudou muito.</td>
+                </tr>
+                <tr>
+                    <td>Objeto direto</td>
+                    <td>Recebe a ação sem preposição.</td>
+                    <td>Ela comprou um livro.</td>
+                </tr>
+                <tr>
+                    <td>Objeto indireto</td>
+                    <td>Recebe a ação com preposição.</td>
+                    <td>Gosta de flores.</td>
+                </tr>
+                <tr>
+                    <td>Predicativo</td>
+                    <td>Atribui característica.</td>
+                    <td>Ela é professora.</td>
+                </tr>
+                <tr>
+                    <td>Complemento nominal</td>
+                    <td>Completa o sentido de um nome.</td>
+                    <td>Orgulho de ser mãe.</td>
+                </tr>
+                <tr>
+                    <td>Aposto</td>
+                    <td>Explica ou detalha outro termo.</td>
+                    <td>João, meu amigo, chegou.</td>
+                </tr>
+            </table>
+        </div>
+
+        <div id="Outras_Classificacoes">
+            <h1>Outras classificações importantes</h1>
+            <table class="substantivo-table">
+                <tr>
+                    <th>Tipo</th>
+                    <th>Explicação</th>
+                    <th>Exemplos</th>
+                </tr>
+                <tr>
+                    <td>Epiceno</td>
+                    <td>Usa um único gênero para designar machos e fêmeas (geralmente animais).</td>
+                    <td>a cobra (macho ou fêmea), o jacaré</td>
+                </tr>
+                <tr>
+                    <td>Sobrecomum</td>
+                    <td>Tem um só gênero para designar pessoas dos dois sexos.</td>
+                    <td>a criança, o indivíduo, a testemunha</td>
+                </tr>
+                <tr>
+                    <td>Comum de dois gêneros</td>
+                    <td>A mesma forma serve para masculino e feminino, variando o artigo.</td>
+                    <td>o estudante / a estudante, o artista / a artista</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+<script>
+    window.onload = function () {
+        const sections = document.querySelectorAll(".container > div[id]"); // pega todas as divs com id dentro do container
+        const navButtons = document.createElement("div"); 
+        navButtons.className = "button-wrapper";
+        navButtons.style.textAlign = "center";
+        navButtons.style.marginBottom = "20px";
+
+        sections.forEach((section, index) => {
+            const h1 = section.querySelector("h1");
+            if (!h1) return;
+
+            const btn = document.createElement("button");
+            btn.textContent = h1.textContent;
+            btn.className = "game-type";
+
+            btn.onclick = () => showSection(section.id);
+
+            navButtons.appendChild(btn);
+
+            // esconde todas exceto a primeira
+            if (index !== 0) section.style.display = "none";
+        });
+
+        document.querySelector(".container").insertBefore(navButtons, document.querySelector(".container").children[1]);
+
+        function showSection(id) {
+            sections.forEach(sec => sec.style.display = "none");
+            document.getElementById(id).style.display = "block";
+            window.scrollTo({ top: 100, behavior: "smooth" });
+        }
+    };
+</script>
 </body>
+
 </html>
